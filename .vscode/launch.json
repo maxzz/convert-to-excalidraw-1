@@ -10,7 +10,7 @@
             "args": [
                 "-i",
                 // "${workspaceFolder}/README.md"
-                "${workspaceFolder}/tests/cursor_execution_flow_of_dostartfillinp.md"
+                "${workspaceFolder}/tests/cursor_execution_flow_of_dostartfillinp-2.md"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
