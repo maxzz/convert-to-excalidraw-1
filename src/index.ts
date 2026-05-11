@@ -1,23 +1,9 @@
 #!/usr/bin/env node
-import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
+import { options } from './cli-options.js';
 import { extractMermaidDiagrams } from './extractor.js';
 import { convertMermaidToExcalidraw } from './converter.js';
-
-const program = new Command();
-
-program
-  .name('me2ex-conv')
-  .description('CLI to convert Mermaid diagrams in Markdown to Excalidraw files')
-  .version('1.0.0')
-  .requiredOption('-i, --input <file>', 'Input Markdown file')
-  .option('-o, --output <prefix>', 'Output file prefix (default: input file name without extension)')
-  .option('-s, --silent', 'Disable console output')
-  .option('-v, --verbose', 'Enable verbose logging')
-  .parse(process.argv);
-
-const options = program.opts();
 
 async function main() {
     const inputPath = path.resolve(options.input);
@@ -51,7 +37,7 @@ async function main() {
         if (!options.silent) console.log(`Converting diagram ${i + 1}/${diagrams.length}...`);
 
         try {
-            const excalidrawJson = await convertMermaidToExcalidraw(diagram, options.verbose);
+            const excalidrawJson = await convertMermaidToExcalidraw(diagram, options.verbose ?? false);
             fs.writeFileSync(outPath, JSON.stringify(excalidrawJson, null, 2));
             if (!options.silent) console.log(`Saved: ${outPath}`);
         } catch (err: any) {
