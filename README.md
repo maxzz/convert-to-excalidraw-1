@@ -58,4 +58,4 @@ me2ex-conv -i my-doc.md -s
 
 ## How it works
 
-The tool uses Puppeteer (a headless browser) to run the `@excalidraw/mermaid-to-excalidraw` and `@excalidraw/excalidraw` libraries, which parse the Mermaid syntax and convert it to native Excalidraw elements. The `build.js` script automatically patches a known subgraph bug in the parser and bundles the browser dependencies into the `dist` folder.
+The tool uses Puppeteer (a headless browser) to run the `@excalidraw/mermaid-to-excalidraw` and `@excalidraw/excalidraw` libraries, which parse the Mermaid syntax and convert it to native Excalidraw elements. The `scripts/build.js` script automatically patches a known subgraph bug in the parser and bundles the browser dependencies into the `dist` folder.
