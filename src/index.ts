@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
+import pc from 'picocolors';
 import { options } from './1-cli-options.js';
 import { extractMermaidDiagrams } from './2-extractor.js';
 import { convertMermaidToExcalidraw } from './3-converter.js';
@@ -8,7 +9,7 @@ import { convertMermaidToExcalidraw } from './3-converter.js';
 async function main() {
     const inputPath = path.resolve(options.input);
     if (!fs.existsSync(inputPath)) {
-        console.error(`Error: Input file ${inputPath} does not exist.`);
+        console.error(pc.red(`Error: Input file ${inputPath} does not exist.`));
         process.exit(1);
     }
 
@@ -16,11 +17,13 @@ async function main() {
     const diagrams = extractMermaidDiagrams(markdown);
 
     if (diagrams.length === 0) {
-        if (!options.silent) console.log('No Mermaid diagrams found in the input file.');
+        if (!options.silent) console.log(pc.yellow('No Mermaid diagrams found in the input file.'));
         return;
     }
 
-    if (!options.silent) console.log(`Found ${diagrams.length} Mermaid diagram(s).`);
+    if (!options.silent) {
+        console.log(pc.cyan(`Found ${diagrams.length} Mermaid diagram(s).`));
+    }
 
     const outputPrefix = options.output
         ? path.resolve(options.output)
@@ -46,22 +49,22 @@ async function main() {
                 : `${outputPath}-${i + 1}.excalidraw`;
 
         if (!options.silent) {
-            console.log(`Converting diagram ${i + 1}/${diagrams.length}...`);
+            console.log(pc.yellow(`Converting diagram ${i + 1}/${diagrams.length}...`));
         }
 
         try {
             const excalidrawJson = await convertMermaidToExcalidraw(diagram, options.verbose ?? false);
             fs.writeFileSync(outPath, JSON.stringify(excalidrawJson, null, 2));
-            if (!options.silent) console.log(`Saved: ${outPath}`);
+            if (!options.silent) console.log(pc.green(`Saved: ${outPath}`));
         } catch (err: any) {
-            console.error(`Failed to convert diagram ${i + 1}:`, err.message);
+            console.error(pc.red(`Failed to convert diagram ${i + 1}: ${err.message}`));
         }
     }
 
-    if (!options.silent) console.log('Done!');
+    if (!options.silent) console.log(pc.green('Done!'));
 }
 
 main().catch(err => {
-    console.error('Unexpected error:', err);
+    console.error(pc.red(`Unexpected error: ${err}`));
     process.exit(1);
 });
