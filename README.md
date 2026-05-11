@@ -6,23 +6,27 @@ This is a CLI utility that converts Mermaid diagrams embedded in Markdown files 
 
 1. Navigate to this directory:
    ```bash
-   cd scripts/convert-to-excalidraw-1
+   cd convert-to-excalidraw-1
    ```
 2. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 3. Build the project (this compiles TypeScript and bundles the required browser libraries):
    ```bash
-   npm run build
+   pnpm run build
+   ```
+4. Install the CLI binary (so the `me2ex-conv` command + Windows `.cmd` wrapper are available):
+   ```bash
+   npm i -g .
    ```
 
 ## Usage
 
-Run the CLI tool using Node.js:
+Run the CLI tool:
 
 ```bash
-node dist/index.js -i <path-to-markdown-file> [options]
+me2ex-conv -i <path-to-markdown-file> [options]
 ```
 
 ### Options
@@ -37,19 +41,19 @@ node dist/index.js -i <path-to-markdown-file> [options]
 
 **Basic conversion:**
 ```bash
-node dist/index.js -i ../../meta/docs/2026/my-doc.md
+me2ex-conv -i ../../meta/docs/2026/my-doc.md
 ```
 *If `my-doc.md` contains one diagram, it generates `my-doc.excalidraw`. If it contains multiple, it generates `my-doc-1.excalidraw`, `my-doc-2.excalidraw`, etc.*
 
 **Specify output prefix:**
 ```bash
-node dist/index.js -i my-doc.md -o output/diagram
+me2ex-conv -i my-doc.md -o output/diagram
 ```
 *Generates `output/diagram-1.excalidraw`, etc.*
 
 **Silent mode:**
 ```bash
-node dist/index.js -i my-doc.md -s
+me2ex-conv -i my-doc.md -s
 ```
 
 ## How it works

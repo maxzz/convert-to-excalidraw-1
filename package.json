@@ -6,7 +6,7 @@
     "license": "MIT",
     "main": "dist/index.js",
     "bin": {
-        "mermaid-to-excalidraw": "./dist/index.js"
+        "me2ex-conv": "./dist/index.js"
     },
     "files": [
         "dist",
@@ -20,15 +20,15 @@
         "converter"
     ],
     "devDependencies": {
-        "@types/node": "^20.0.0",
-        "esbuild": "^0.20.0",
-        "typescript": "^5.0.0"
+        "@types/node": "^25.7.0",
+        "esbuild": "^0.28.0",
+        "typescript": "^6.0.3"
     },
     "dependencies": {
-        "@excalidraw/excalidraw": "^0.17.6",
-        "@excalidraw/mermaid-to-excalidraw": "^1.0.0",
-        "commander": "^12.0.0",
-        "puppeteer": "^22.0.0"
+        "@excalidraw/excalidraw": "^0.18.1",
+        "@excalidraw/mermaid-to-excalidraw": "^2.2.2",
+        "commander": "^14.0.3",
+        "puppeteer": "^24.43.1"
     },
     "scripts": {
         "build": "node build.js && tsc",

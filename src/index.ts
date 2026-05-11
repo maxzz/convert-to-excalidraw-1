@@ -8,7 +8,7 @@ import { convertMermaidToExcalidraw } from './converter';
 const program = new Command();
 
 program
-  .name('convert-to-excalidraw')
+  .name('me2ex-conv')
   .description('CLI to convert Mermaid diagrams in Markdown to Excalidraw files')
   .version('1.0.0')
   .requiredOption('-i, --input <file>', 'Input Markdown file')
