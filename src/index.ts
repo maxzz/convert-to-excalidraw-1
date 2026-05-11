@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
-import { options } from './cli-options.js';
-import { extractMermaidDiagrams } from './extractor.js';
-import { convertMermaidToExcalidraw } from './converter.js';
+import { options } from './1-cli-options.js';
+import { extractMermaidDiagrams } from './2-extractor.js';
+import { convertMermaidToExcalidraw } from './3-converter.js';
 
 async function main() {
     const inputPath = path.resolve(options.input);
