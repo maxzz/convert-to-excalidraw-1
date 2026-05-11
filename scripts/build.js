@@ -1,6 +1,9 @@
-const esbuild = require('esbuild');
-const fs = require('fs');
-const path = require('path');
+import * as esbuild from 'esbuild';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 
 // Resolve package entrypoints (using the package export entry, which avoids "exports" restrictions)
 const mermaidEntryPoint = require.resolve('@excalidraw/mermaid-to-excalidraw');

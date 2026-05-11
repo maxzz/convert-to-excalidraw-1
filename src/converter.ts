@@ -1,7 +1,10 @@
 import puppeteer from 'puppeteer';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: boolean): Promise<any> {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 

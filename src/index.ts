@@ -2,8 +2,8 @@
 import { Command } from 'commander';
 import fs from 'fs';
 import path from 'path';
-import { extractMermaidDiagrams } from './extractor';
-import { convertMermaidToExcalidraw } from './converter';
+import { extractMermaidDiagrams } from './extractor.js';
+import { convertMermaidToExcalidraw } from './converter.js';
 
 const program = new Command();
 
