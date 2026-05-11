@@ -9,7 +9,8 @@
             "program": "${workspaceFolder}/src/index.ts",
             "args": [
                 "-i",
-                "${workspaceFolder}/README.md"
+                // "${workspaceFolder}/README.md"
+                "${workspaceFolder}/tests/cursor_execution_flow_of_dostartfillinp.md"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
