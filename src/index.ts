@@ -26,15 +26,28 @@ async function main() {
         ? path.resolve(options.output)
         : path.join(path.dirname(inputPath), path.basename(inputPath, path.extname(inputPath)));
 
+    // Create output directory if more then one file is being generated and it doesn't exist and redirect generated files to the output directory
+
+    let outputPath = outputPrefix;
+
+    if (diagrams.length > 1 && !fs.existsSync(path.dirname(outputPrefix))) {
+        fs.mkdirSync(path.dirname(outputPrefix));
+        outputPath = path.dirname(outputPrefix);
+    }
+
+    // Loop through all diagrams and convert them to Excalidraw
+
     for (let i = 0; i < diagrams.length; i++) {
         const diagram = diagrams[i];
         const outPath = diagrams.length === 1 && options.output
-            ? `${outputPrefix}.excalidraw`
+            ? `${outputPath}.excalidraw`
             : diagrams.length === 1 && !options.output
-                ? `${outputPrefix}.excalidraw`
-                : `${outputPrefix}-${i + 1}.excalidraw`;
+                ? `${outputPath}.excalidraw`
+                : `${outputPath}-${i + 1}.excalidraw`;
 
-        if (!options.silent) console.log(`Converting diagram ${i + 1}/${diagrams.length}...`);
+        if (!options.silent) {
+            console.log(`Converting diagram ${i + 1}/${diagrams.length}...`);
+        }
 
         try {
             const excalidrawJson = await convertMermaidToExcalidraw(diagram, options.verbose ?? false);
