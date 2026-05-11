@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug CLI (tsx)",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "tsx",
+            "program": "${workspaceFolder}/src/index.ts",
+            "args": [
+                "-i",
+                "${workspaceFolder}/README.md"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "<node_internals>/**",
+                "${workspaceFolder}/node_modules/**"
+            ]
+        }
+    ]
+}

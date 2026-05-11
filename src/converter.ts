@@ -15,8 +15,8 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
     await page.setContent('<!DOCTYPE html><html><body></body></html>');
 
     // Add scripts
-    await page.addScriptTag({ path: path.join(__dirname, 'mermaid-to-excalidraw.bundle.js') });
-    await page.addScriptTag({ path: path.join(__dirname, 'excalidraw.bundle.js') });
+    await page.addScriptTag({ path: path.join(__dirname, 'mermaid-to-excalidraw.bundle.iife.js') });
+    await page.addScriptTag({ path: path.join(__dirname, 'excalidraw.bundle.iife.js') });
 
     const result = await page.evaluate(async (code) => {
         try {

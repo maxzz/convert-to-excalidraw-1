@@ -1,7 +1,7 @@
-import * as esbuild from 'esbuild';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { createRequire } from 'node:module';
+import { build } from 'tsdown';
 
 const require = createRequire(import.meta.url);
 
@@ -30,26 +30,40 @@ if (flowchartToPatch) {
 }
 
 // Ensure dist directory exists
-if (!fs.existsSync('dist')) {
-    fs.mkdirSync('dist');
+const distDir = 'dist';
+if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir);
 }
 
-// Bundle mermaid-to-excalidraw
-esbuild.buildSync({
-    entryPoints: [mermaidEntryPoint],
-    bundle: true,
-    outfile: 'dist/mermaid-to-excalidraw.bundle.js',
+const buildBase = {
+    outDir: distDir,
     format: 'iife',
-    globalName: 'mermaidToExcalidraw'
-});
-console.log('Bundled mermaid-to-excalidraw');
+    platform: 'browser'
+};
 
-// Bundle excalidraw
-esbuild.buildSync({
-    entryPoints: [excalidrawEntryPoint],
-    bundle: true,
-    outfile: 'dist/excalidraw.bundle.js',
-    format: 'iife',
-    globalName: 'Excalidraw'
-});
-console.log('Bundled excalidraw');
+try {
+    // Bundle mermaid-to-excalidraw
+    await build({
+        ...buildBase,
+        entry: {
+            'mermaid-to-excalidraw.bundle': mermaidEntryPoint
+        },
+        clean: true,
+        globalName: 'mermaidToExcalidraw'
+    });
+    console.log('Bundled mermaid-to-excalidraw');
+
+    // Bundle excalidraw
+    await build({
+        ...buildBase,
+        entry: {
+            'excalidraw.bundle': excalidrawEntryPoint
+        },
+        clean: false,
+        globalName: 'Excalidraw'
+    });
+    console.log('Bundled excalidraw');
+} catch (err) {
+    console.error('Failed to bundle browser dependencies:', err);
+    process.exitCode = 1;
+}
