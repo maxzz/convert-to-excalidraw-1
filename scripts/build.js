@@ -39,7 +39,9 @@ const buildBase = {
     outDir: distDir,
     format: 'esm',
     platform: 'browser',
-    codeSplitting: false
+    outputOptions: {
+        inlineDynamicImports: true
+    }
 };
 
 try {
