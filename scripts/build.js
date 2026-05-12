@@ -37,11 +37,9 @@ if (!fs.existsSync(distDir)) {
 
 const buildBase = {
     outDir: distDir,
-    format: 'iife',
+    format: 'esm',
     platform: 'browser',
-    define: {
-        'import.meta': '{}'
-    }
+    codeSplitting: false
 };
 
 try {
@@ -51,8 +49,7 @@ try {
         entry: {
             'mermaid-to-excalidraw.bundle': mermaidEntryPoint
         },
-        clean: true,
-        globalName: 'mermaidToExcalidraw'
+        clean: true
     });
     console.log('Bundled mermaid-to-excalidraw');
 
@@ -62,8 +59,7 @@ try {
         entry: {
             'excalidraw.bundle': excalidrawEntryPoint
         },
-        clean: false,
-        globalName: 'Excalidraw'
+        clean: false
     });
     console.log('Bundled excalidraw');
 } catch (err) {

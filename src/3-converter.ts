@@ -1,14 +1,14 @@
 import puppeteer from 'puppeteer';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-function resolveBundlePath(baseDir: string, filename: string): string {
-    const candidates = [
+function resolveBundlePath(baseDir: string, filenames: string[]): string {
+    const candidates = filenames.flatMap((filename) => ([
         path.join(baseDir, filename),
         path.join(baseDir, '..', 'dist', filename),
         path.join(process.cwd(), 'dist', filename)
-    ];
+    ]));
 
     for (const candidate of candidates) {
         if (fs.existsSync(candidate)) {
@@ -16,15 +16,48 @@ function resolveBundlePath(baseDir: string, filename: string): string {
         }
     }
 
-    throw new Error(`Bundle file not found: ${filename}. Run "pnpm run build" first.`);
+    throw new Error(`Bundle file not found. Run "pnpm run build" first.`);
+}
+
+function createModuleLoaderHtml(mermaidBundleUrl: string, excalidrawBundleUrl: string): string {
+    return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script type="module">
+      import * as mermaidToExcalidraw from ${JSON.stringify(mermaidBundleUrl)};
+      import * as Excalidraw from ${JSON.stringify(excalidrawBundleUrl)};
+      window.mermaidToExcalidraw = mermaidToExcalidraw;
+      window.Excalidraw = Excalidraw;
+    </script>
+  </body>
+</html>`;
 }
 
 export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: boolean): Promise<any> {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const mermaidBundlePath = resolveBundlePath(__dirname, 'mermaid-to-excalidraw.bundle.iife.js');
-    const excalidrawBundlePath = resolveBundlePath(__dirname, 'excalidraw.bundle.iife.js');
-    const browser = await puppeteer.launch({ headless: true });
+    const mermaidBundlePath = resolveBundlePath(__dirname, [
+        'mermaid-to-excalidraw.bundle.js',
+        'mermaid-to-excalidraw.bundle.mjs'
+    ]);
+    const excalidrawBundlePath = resolveBundlePath(__dirname, [
+        'excalidraw.bundle.js',
+        'excalidraw.bundle.mjs'
+    ]);
+    const mermaidBundleUrl = pathToFileURL(mermaidBundlePath).href;
+    const excalidrawBundleUrl = pathToFileURL(excalidrawBundlePath).href;
+    const distDir = path.dirname(mermaidBundlePath);
+    const htmlPath = path.join(
+        distDir,
+        `.me2ex-loader-${process.pid}-${Date.now()}.html`
+    );
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--allow-file-access-from-files']
+    });
 
     try {
         const page = await browser.newPage();
@@ -33,11 +66,14 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
             page.on('console', msg => console.log('PAGE LOG:', msg.text()));
         }
 
-        await page.setContent('<!DOCTYPE html><html><body></body></html>');
-
-        // Add scripts
-        await page.addScriptTag({ path: mermaidBundlePath });
-        await page.addScriptTag({ path: excalidrawBundlePath });
+        fs.writeFileSync(htmlPath, createModuleLoaderHtml(mermaidBundleUrl, excalidrawBundleUrl), 'utf8');
+        await page.goto(pathToFileURL(htmlPath).href, { waitUntil: 'networkidle0' });
+        await page.waitForFunction(
+            () => {
+                return Boolean((window as any).mermaidToExcalidraw && (window as any).Excalidraw);
+            },
+            { timeout: 60000 }
+        );
 
         const result = await page.evaluate(async (code) => {
             try {
@@ -67,6 +103,7 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
             files: result.files || {}
         };
     } finally {
+        fs.rmSync(htmlPath, { force: true });
         await browser.close().catch(() => undefined);
     }
 }
