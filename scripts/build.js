@@ -39,6 +39,9 @@ const buildBase = {
     outDir: distDir,
     format: 'esm',
     platform: 'browser',
+    deps: {
+        onlyBundle: false
+    },
     outputOptions: {
         codeSplitting: false
     }
