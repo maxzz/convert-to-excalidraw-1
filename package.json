@@ -1,6 +1,6 @@
 {
     "name": "markdown-mermaid-to-excalidraw",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "CLI utility to extract Mermaid diagrams from Markdown and convert them to Excalidraw files",
     "author": "Max Zakharzhevskiy",
     "license": "MIT",
@@ -13,6 +13,13 @@
         "dist",
         "README.md"
     ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/maxzz/convert-to-excalidraw-1.git"
+    },
+    "bugs": {
+        "url": "https://github.com/maxzz/convert-to-excalidraw-1/issues"
+    },
     "keywords": [
         "mermaid",
         "excalidraw",
