@@ -38,7 +38,10 @@ if (!fs.existsSync(distDir)) {
 const buildBase = {
     outDir: distDir,
     format: 'iife',
-    platform: 'browser'
+    platform: 'browser',
+    define: {
+        'import.meta': '{}'
+    }
 };
 
 try {

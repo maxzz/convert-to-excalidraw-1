@@ -37,6 +37,7 @@
         "build": "node scripts/build.js && tsc",
         "debug": "tsx --inspect-brk src/index.ts",
         "start": "node dist/index.js",
-        "prepublishOnly": "pnpm run build"
+        "prepublishOnly": "pnpm run build",
+        "to-npm": "pnpm run build && pnpm publish"
     }
 }
