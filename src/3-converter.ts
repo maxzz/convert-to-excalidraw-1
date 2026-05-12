@@ -4,11 +4,13 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 function resolveBundlePath(baseDir: string, filenames: string[]): string {
-    const candidates = filenames.flatMap((filename) => ([
-        path.join(baseDir, filename),
-        path.join(baseDir, '..', 'dist', filename),
-        path.join(process.cwd(), 'dist', filename)
-    ]));
+    const candidates = filenames.flatMap(
+        (filename) => ([
+            path.join(baseDir, filename),
+            path.join(baseDir, '..', 'dist', filename),
+            path.join(process.cwd(), 'dist', filename)
+        ])
+    );
 
     for (const candidate of candidates) {
         if (fs.existsSync(candidate)) {
@@ -37,8 +39,10 @@ function createModuleLoaderHtml(mermaidBundleUrl: string, excalidrawBundleUrl: s
 }
 
 export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: boolean): Promise<any> {
+
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
+
     const mermaidBundlePath = resolveBundlePath(__dirname, [
         'mermaid-to-excalidraw.bundle.js',
         'mermaid-to-excalidraw.bundle.mjs'
@@ -47,17 +51,14 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
         'excalidraw.bundle.js',
         'excalidraw.bundle.mjs'
     ]);
+
     const mermaidBundleUrl = pathToFileURL(mermaidBundlePath).href;
     const excalidrawBundleUrl = pathToFileURL(excalidrawBundlePath).href;
+
     const distDir = path.dirname(mermaidBundlePath);
-    const htmlPath = path.join(
-        distDir,
-        `.me2ex-loader-${process.pid}-${Date.now()}.html`
-    );
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--allow-file-access-from-files']
-    });
+    const htmlPath = path.join(distDir, `.me2ex-loader-${process.pid}-${Date.now()}.html`);
+
+    const browser = await puppeteer.launch({ headless: true, args: ['--allow-file-access-from-files'] });
 
     try {
         const page = await browser.newPage();
@@ -67,28 +68,30 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
         }
 
         fs.writeFileSync(htmlPath, createModuleLoaderHtml(mermaidBundleUrl, excalidrawBundleUrl), 'utf8');
+
         await page.goto(pathToFileURL(htmlPath).href, { waitUntil: 'networkidle0' });
         await page.waitForFunction(
             () => {
                 return Boolean((window as any).mermaidToExcalidraw && (window as any).Excalidraw);
             },
-            { timeout: 60000 }
-        );
+            { timeout: 60000 });
 
-        const result = await page.evaluate(async (code) => {
-            try {
-                const { elements, files } = await (window as any).mermaidToExcalidraw.parseMermaidToExcalidraw(code, {
-                    fontSize: 20,
-                });
+        const result = await page.evaluate(
+            async (code) => {
+                try {
+                    const { elements, files } = await (window as any).mermaidToExcalidraw.parseMermaidToExcalidraw(code, {
+                        fontSize: 20,
+                    });
 
-                // Convert skeleton elements to actual Excalidraw elements
-                const convertedElements = (window as any).Excalidraw.convertToExcalidrawElements(elements);
+                    // Convert skeleton elements to actual Excalidraw elements
+                    const convertedElements = (window as any).Excalidraw.convertToExcalidrawElements(elements);
 
-                return { elements: convertedElements, files };
-            } catch (e: any) {
-                return { error: e.toString() };
-            }
-        }, mermaidCode);
+                    return { elements: convertedElements, files };
+                } catch (e: any) {
+                    return { error: e.toString() };
+                }
+            },
+            mermaidCode);
 
         if (result.error) {
             throw new Error(result.error);
@@ -104,6 +107,7 @@ export async function convertMermaidToExcalidraw(mermaidCode: string, verbose: b
         };
     } finally {
         fs.rmSync(htmlPath, { force: true });
+
         await browser.close().catch(() => undefined);
     }
 }
